@@ -60,7 +60,7 @@ function CustomLoadingOverlay() {
 
 
 export const DataTableFilter = props => {
-    let id = UrlParse(props.id, 'group-stats')
+    //let id = UrlParse(props.id, 'group-stats')
     //const res =  AltReq(id)
     //const { data } = res.data.players.map(player => {return {name: player.name}})
     /*
@@ -80,19 +80,17 @@ export const DataTableFilter = props => {
 
 
 
-    function QuickSearchToolbar(props) {
+    function CustomToolbar(props) {
         const classes = useStyles();
 
         return (
-            <div className={classes.root}>
-                <div>
-                    <GridToolbarContainer>
-                        <GridToolbarColumnsButton />
-                        <GridToolbarFilterButton />
-                        <GridToolbarDensitySelector />
-                        <GridToolbarExport />
-                    </GridToolbarContainer>
-                </div>
+            <div>
+                <GridToolbarContainer>
+                    <GridToolbarColumnsButton />
+                    <GridToolbarFilterButton />
+                    <GridToolbarDensitySelector />
+                    <GridToolbarExport />
+                </GridToolbarContainer>
             </div>
         );
     }
@@ -117,10 +115,9 @@ export const DataTableFilter = props => {
         }]
 
         let headers = props.data.players !== undefined ? _.keys(props.data.players[0].game_average[props.type]) : []
-        let content = props.data.players !== undefined ? props.data.players.map(player => { 
+        let content = props.data.players !== undefined ? props.data.players.map(player => {
             let stats = player.game_average[props.type]
             return _.extend(stats, { id: player.id, name: player.name, team: player.team, })
-        
         }) : []
         setRows(props.data.players !== undefined ? content : [])
         //console.log(rows)
