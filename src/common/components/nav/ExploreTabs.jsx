@@ -4,10 +4,10 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-
+import { DataContext, ThingsProvider } from '../control/DataContext'
 export const ExploreTabs = props => {
   const [value, setValue] = React.useState('1');
-
+  console.log(props)
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -22,7 +22,13 @@ export const ExploreTabs = props => {
             <Tab label="Item Three" value="3" />
           </TabList>
         </Box>
-        <TabPanel value="1">Item One</TabPanel>
+        <TabPanel value="1">Item One<br />
+
+        <ThingsProvider value={props.selected.data}>
+          <DataContext />
+        </ThingsProvider>
+
+        </TabPanel>
         <TabPanel value="2">Item Two</TabPanel>
         <TabPanel value="3">Item Three</TabPanel>
       </TabContext>

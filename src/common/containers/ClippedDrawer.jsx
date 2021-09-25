@@ -14,12 +14,18 @@ import Collapse from '@mui/material/Collapse'
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton'
 import { AltReq, UrlParse } from '../../utils/AltReq';
-import { ExploreTabs } from '../components/nav/ExploreTabs';
 import DateRangeIcon from '@mui/icons-material/DateRange';
+import GamesIcon from '@mui/icons-material/Games';
+import { DataContext } from '../components/control/DataContext';
+
+
 
 const drawerWidth = 240;
+
+
 
 export const ClippedDrawer = () => {
     // eslint-disable-next-line
@@ -31,6 +37,19 @@ export const ClippedDrawer = () => {
     const [games, setGames] = React.useState() // eslint-disable-next-line
     const [selected, setSelected] = React.useState() // eslint-disable-next-line
     const [open, setOpen] = React.useState({ season: true, leagues: true, weeks: true, matches: true });
+
+    const DataRelay = props => {
+        //console.log(props)
+        let url = UrlParse(props.id, 'group-stats')
+        //setSelected(props)
+        const req = AltReq(url)
+        req.then(res => {
+            setSelected({ ...selected, name: props.name, id: props.id, type: props.type, data: res.data })
+            //setActive({...active, data: res.data})
+            //console.log(selected)
+        })
+
+    }
 
     const Updater = props => {
         //console.log(props)
@@ -45,17 +64,22 @@ export const ClippedDrawer = () => {
                     //console.log(res.data.list)//res.data.list[0].id)
                 })
                 setSeason(props)
+                //setSelected(props)
                 setWeek()
+                setMatch()
                 setActive({ season: props, league: undefined, week: undefined, match: undefined, games: undefined })
                 //console.log(active)
                 break;
             case 'league':
                 //console.log('league')
                 req.then(res => {
+                    //console.log(res)
                     res.data.list.sort((a, b) => a.name.localeCompare(b.name))
                     setWeek(res.data.list)
-                    //console.log(res.data.list)
+
                 })
+                DataRelay(props)
+                setMatch()
                 setActive({ season: active.season, league: props, week: undefined, match: undefined, games: undefined })
                 //console.log(active)
                 break;
@@ -66,34 +90,33 @@ export const ClippedDrawer = () => {
                     setMatch(res.data.list)
                     //console.log(res.data.list)
                 })
+                DataRelay(props)
                 setActive({ season: active.season, league: active.league, week: props, match: undefined, games: undefined })
                 //console.log(active)
                 break;
             case 'match':
+                //console.log('match')
                 req.then(res => {
                     res.data.list.sort((a, b) => a.name.localeCompare(b.name))
                     setGames(res.data.list)
-                    console.log(res.data.list)
+                    //console.log(res.data.list)
                 })
-                setActive({...active, match: props, })
-                console.log(active)
+                DataRelay(props)
+                setActive({ ...active, match: props, })
+                //console.log(active)
                 break;
             default:
                 console.log('default')
         }
     }
 
-    const handleListItemClick = (event, index, active) => {
-        //console.log(active)
-        setSelected(active)
-        Updater(active)
-        //console.log(active)
-    };
-
     const handleClick = props => {
         //console.log(props)
         setOpen(props);
     };
+
+
+
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -123,8 +146,7 @@ export const ClippedDrawer = () => {
                         <List component="div" disablePadding>
                             <ListItemButton
                                 sx={{ pl: 4 }}
-                                // eslint-disable-next-line react/jsx-no-duplicate-props
-                                onClick={(event) => handleListItemClick(event, 0, { name: 'Season 10', id: 'season-10-j1nooa6jlw', type: 'season' })}
+                                onClick={() => Updater({ name: 'Season 10', id: 'season-10-j1nooa6jlw', type: 'season' })}
                             >
                                 <ListItemIcon>
                                     <LanguageIcon />
@@ -134,8 +156,7 @@ export const ClippedDrawer = () => {
 
                             <ListItemButton
                                 sx={{ pl: 4 }}
-                                // eslint-disable-next-line react/jsx-no-duplicate-props
-                                onClick={(event) => handleListItemClick(event, 1, { name: 'Season 11', id: 'season-11-phqfzmk1fq', type: 'season' })}
+                                onClick={() => Updater({ name: 'Season 11', id: 'season-11-phqfzmk1fq', type: 'season' })}
                             >
                                 <ListItemIcon>
                                     <LanguageIcon />
@@ -150,19 +171,22 @@ export const ClippedDrawer = () => {
                     {leagues !== undefined ? <div>
                         <ListItemButton value="leagues" onClick={event => handleClick({ ...open, leagues: !open.leagues })}>
                             <ListItemText primary="Leagues" />
-                            {open.league ? <ExpandLess /> : <ExpandMore />}
+                            {open.leagues ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
                         <Collapse in={open.leagues} timeout="auto" unmountOnExit>
                             <List component="div" disablePadding>
-                                {leagues.map((item, i) => <ListItemButton
-                                    sx={{ pl: 4 }}
-                                    onClick={(event) => handleListItemClick(event, i++, { name: item.name, id: item.id, type: 'league' })}
-                                >
-                                    <ListItemIcon>
-                                        <GroupsIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.name} />
-                                </ListItemButton>
+
+                                {leagues.map((item, i) => <ListItem key={i}>
+                                    <ListItemButton
+                                        sx={{ pl: 4 }}
+                                        onClick={() => Updater({ name: item.name, id: item.id, type: 'league' })}
+                                    >
+                                        <ListItemIcon>
+                                            <GroupsIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary={item.name} />
+                                    </ListItemButton>
+                                </ListItem>
                                 )}
 
                             </List>
@@ -178,15 +202,18 @@ export const ClippedDrawer = () => {
                         </ListItemButton>
                         <Collapse in={open.weeks} timeout="auto" unmountOnExit>
                             <List component="div" disablePadding>
-                                {week.map((item, i) => <ListItemButton
-                                    sx={{ pl: 4 }}
-                                    onClick={(event) => handleListItemClick(event, i++, { name: item.name, id: item.id, type: 'week' })}
-                                >
-                                    <ListItemIcon>
-                                        <DateRangeIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.name} />
-                                </ListItemButton>
+                                {week.map((item, i) => <ListItem key={i} >
+                                    <ListItemButton
+                                        sx={{ pl: 4 }}
+                                        onClick={() => Updater({ name: item.name, id: item.id, type: 'week' })}
+
+                                    >
+                                        <ListItemIcon>
+                                            <DateRangeIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary={item.name} />
+                                    </ListItemButton>
+                                </ListItem>
                                 )}
 
                             </List>
@@ -202,15 +229,17 @@ export const ClippedDrawer = () => {
                         </ListItemButton>
                         <Collapse in={open.matches} timeout="auto" unmountOnExit>
                             <List component="div" disablePadding>
-                                {match.map((item, i) => <ListItemButton
-                                    sx={{ pl: 4 }}
-                                    onClick={(event) => handleListItemClick(event, i++, { name: item.name, id: item.id, type: 'match' })}
-                                >
-                                    <ListItemIcon>
-                                        <GroupsIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.name} />
-                                </ListItemButton>
+                                {match.map((item, i) => <ListItem key={i} >
+                                    <ListItemButton
+                                        sx={{ pl: 4 }}
+                                        onClick={() => Updater({ name: item.name, id: item.id, type: 'match' })}
+                                    >
+                                        <ListItemIcon>
+                                            <GamesIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary={item.name} />
+                                    </ListItemButton>
+                                </ListItem>
                                 )}
 
                             </List>
@@ -225,7 +254,8 @@ export const ClippedDrawer = () => {
 
             <Box component="main" sx={{ flexGrow: 1, }}>
                 <Toolbar />
-                {active !== undefined ? <ExploreTabs active={active} selected={selected} /> : null}
+                {selected !== undefined ? <DataContext active={active} selected={selected} /> /*<ExploreTabs active={active} selected={selected} />*/ : null}
+
             </Box>
         </Box>
     );
