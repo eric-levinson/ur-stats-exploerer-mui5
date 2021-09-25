@@ -5,46 +5,10 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Divider from '@mui/material/Divider'
 import Paper from '@mui/material/Paper';
 import { SimpleTable } from '../data/OnlyTable'
-import { DataGrid, 
-    GridToolbarContainer,
-    GridToolbarColumnsButton,
-    GridToolbarFilterButton,
-    GridToolbarExport,
-    GridToolbarDensitySelector,
-    GridToolbar } from '@mui/x-data-grid';
+import { ThingsProvider } from '../data/ThingContext'
 
 import _ from 'lodash'
 
-import DataTable from 'react-data-table-component';
-//const deez = [
-//    {
-//        name: 'Title',
-//        sortable: true,
-//        selector: row => row.title,
-//    },
-//    {
-//        name: 'Year',
-//        sortable: true,
-//        selector: row => row.year,
-//    },
-//];
-//
-//const nuth = [
-//    {
-//        id: 1,
-//        title: 'Beetlejuice',
-//        year: '1988',
-//    },
-//    {
-//        id: 2,
-//        title: 'Ghostbusters',
-//        year: '1984',
-//    },
-//]
-
-//const ThingsContext = React.createContext({})
-//export const ThingsProvider = ThingsContext.Provider
-//export default ThingsContext
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
     '& .MuiToggleButtonGroup-grouped': {
@@ -62,23 +26,11 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
     },
 }));
 
-function CustomToolbar() {
-    return (
-        <div>
-            <GridToolbarContainer>
-                <GridToolbarColumnsButton />
-                <GridToolbarFilterButton />
-                <GridToolbarDensitySelector />
-                <GridToolbarExport />
-            </GridToolbarContainer>
-        </div>
-    );
-}
 
 export const DataContext = props => {
 
     //const things = React.useContext(ThingsContext)
-    console.log(props.selected.data)
+    //console.log(props.selected.data)
     let stats = props.selected.data
     const [alignment, setAlignment] = React.useState('game_average');
     const [dataView, setDataView] = React.useState('players');
@@ -118,15 +70,15 @@ export const DataContext = props => {
         let statArr = []
         formats.forEach(format => _.assign(statArr, item.[alignment].[format]))
         let team = item.team !== undefined ? item.team : null
-        return _.assign({ id: item.name, name: item.name, team }, statArr)
+        return _.assign({ id: item.name, /*name: item.name,*/ team }, statArr)
     })
     //console.log(initMap)
 
     React.useEffect(() => {
         let headers = initMap !== [] ? _.keys(initMap[0]) : []
-        //let col = headers !== [] ? headers.map(header => { return { field: header, headerName: header, width: 150, editable: false, } }) : columns
-        let col = headers !== [] ? headers.map(header => { return { id: header, sortable: true, selector: row => row.[header], } }) : columns
-        
+        let col = headers !== [] ? headers.map(header => { return { key: header, name: header, } }) : columns
+        //let col = headers !== [] ? headers.map(header => { return { name: header, sortable: true, selector: row => row.[header], } }) : columns
+
         //console.log(col)
         //console.log(initMap)
         setColumns(col)
@@ -135,8 +87,8 @@ export const DataContext = props => {
 
     }, [props, alignment, dataView, formats])
 
-    console.log(columns)
-    console.log(rows)
+    //console.log(columns)
+    //console.log(rows)
     return (
         <div>
             <Paper
@@ -182,17 +134,11 @@ export const DataContext = props => {
                 </StyledToggleButtonGroup>
             </Paper>
             <Divider />
-            <div style={{ display: 'flex', height: '80vh', width: '100%' }}>
-                <div style={{ flexGrow: 1,}}>
-                    <DataTable
-                    columns={columns}
-                    data={rows}
-                    theme='dark'
-                    pagination
-                    fixedHeader
-                />
-                </div>
-            </div>
+
+            <ThingsProvider value={[{rows: rows, columns: columns}]}>
+                <SimpleTable/>
+            </ThingsProvider>
+
         </div>
     );
 }
