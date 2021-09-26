@@ -55,13 +55,15 @@ export const ClippedDrawer = () => {
         //console.log(props)
         let url = UrlParse(props.id, 'group-list')
         const req = AltReq(url)
+        console.log(url)
+        req.then(res => {console.log(res)})
         switch (props.type) {
             case 'season':
-                //console.log('season')
                 req.then(res => {
+                    
                     res.data.list.sort((a, b) => a.name.localeCompare(b.name))
                     setLeagues(res.data.list)
-                    //console.log(res.data.list)//res.data.list[0].id)
+                    //res.data.list[0].id)
                 })
                 setSeason(props)
                 //setSelected(props)
@@ -139,7 +141,7 @@ export const ClippedDrawer = () => {
                 <Toolbar />
                 <Box sx={{ overflow: 'auto' }}>
                     <ListItemButton value="seasons" onClick={event => handleClick({ ...open, season: !open.season })}>
-                        <ListItemText primary="Seasons" />
+                        <ListItemText primary="Seasons" secondary={active && active.season !== undefined ? active.season.name : 'Pick a season'} />
                         {open.season ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
                     <Collapse in={open.season} timeout="auto" unmountOnExit>
@@ -170,7 +172,7 @@ export const ClippedDrawer = () => {
 
                     {leagues !== undefined ? <div>
                         <ListItemButton value="leagues" onClick={event => handleClick({ ...open, leagues: !open.leagues })}>
-                            <ListItemText primary="Leagues" />
+                            <ListItemText primary="Leagues" secondary={active && active.league !== undefined ? active.league.name : 'Pick a league'}  />
                             {open.leagues ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
                         <Collapse in={open.leagues} timeout="auto" unmountOnExit>
@@ -197,7 +199,7 @@ export const ClippedDrawer = () => {
 
                     {week !== undefined ? <div>
                         <ListItemButton value="weeks" onClick={event => handleClick({ ...open, weeks: !open.weeks })}>
-                            <ListItemText primary="Weeks" />
+                            <ListItemText primary="Weeks" secondary={active && active.week !== undefined ? active.week.name : 'Pick a week'} />
                             {open.weeks ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
                         <Collapse in={open.weeks} timeout="auto" unmountOnExit>
@@ -224,7 +226,7 @@ export const ClippedDrawer = () => {
 
                     {match !== undefined ? <div>
                         <ListItemButton value="matches" onClick={event => handleClick({ ...open, matches: !open.matches })}>
-                            <ListItemText primary="Matches" />
+                            <ListItemText primary="Matches" secondary={active && active.match !== undefined ? active.match.name : 'Pick a match'} />
                             {open.matches ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
                         <Collapse in={open.matches} timeout="auto" unmountOnExit>

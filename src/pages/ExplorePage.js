@@ -13,7 +13,7 @@ function ExplorePage(e) {
 
     return (
         <div>
-            < ClippedDrawer origin={e.match.params.origin} />
+            < ClippedDrawer />
         </div>
     );
 }

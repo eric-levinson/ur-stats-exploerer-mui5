@@ -14,6 +14,7 @@ class Routes extends React.Component {
         <Switch>
           <Redirect exact from="/" to="/explore" />
           <Route path='/explore' component={ClippedDrawer} />
+          
           <Route
           render={function() {
             return <h1>Not Found</h1>;

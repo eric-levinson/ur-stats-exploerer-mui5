@@ -5,9 +5,7 @@ import darkScrollbar from '@mui/material/darkScrollbar';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Routes from './Routes';
 
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-
-
+import { ThemeProvider, createTheme, unstable_createMuiStrictModeTheme } from '@mui/material/styles';
 
 
 const App = () => {
@@ -15,13 +13,24 @@ const App = () => {
 
   const theme = React.useMemo(
     () =>
-      createTheme({
+    unstable_createMuiStrictModeTheme({
         palette: {
           mode: prefersDarkMode ? 'dark' : 'light',
         },
         MuiCssBaseline: {
           styleOverrides: {
             body: prefersDarkMode === 'dark' ? darkScrollbar() : null,
+          },
+        },
+        props: {
+          MuiList: {
+            dense: true,
+          },
+          MuiMenuItem: {
+            dense: true,
+          },
+          MuiTable: {
+            size: 'small',
           },
         },
       }),

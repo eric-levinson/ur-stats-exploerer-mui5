@@ -4,7 +4,8 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Divider from '@mui/material/Divider'
 import Paper from '@mui/material/Paper';
-import { SimpleTable } from '../data/OnlyTable'
+import Box from '@mui/material/Box'
+import { SimpleTable } from '../data/OnlyTable.tsx'
 import { ThingsProvider } from '../data/ThingContext'
 
 import _ from 'lodash'
@@ -69,14 +70,16 @@ export const DataContext = props => {
     let initMap = stats[dataView].map(item => {
         let statArr = []
         formats.forEach(format => _.assign(statArr, item.[alignment].[format]))
-        let team = item.team !== undefined ? item.team : null
+        let team = item.team !== undefined ? item.team : item.name
         return _.assign({ id: item.name, /*name: item.name,*/ team }, statArr)
     })
     //console.log(initMap)
 
     React.useEffect(() => {
         let headers = initMap !== [] ? _.keys(initMap[0]) : []
-        let col = headers !== [] ? headers.map(header => { return { key: header, name: header, } }) : columns
+        let col = headers !== [] ? headers.map(header => { 
+            let typeSelect = ['id', 'team'].includes(header) ? 'string' : 'number'
+            return { field: header, headerName: header, width: 175, type: typeSelect} }) : columns
         //let col = headers !== [] ? headers.map(header => { return { name: header, sortable: true, selector: row => row.[header], } }) : columns
 
         //console.log(col)
@@ -134,11 +137,13 @@ export const DataContext = props => {
                 </StyledToggleButtonGroup>
             </Paper>
             <Divider />
-
-            <ThingsProvider value={[{rows: rows, columns: columns}]}>
-                <SimpleTable/>
-            </ThingsProvider>
-
+            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <div style={{ height: '80vh', maxHeight: '100%', width: '100%' }}>
+                    <ThingsProvider value={[{ rows: rows, columns: columns }]}>
+                        <SimpleTable />
+                    </ThingsProvider>
+                </div>
+            </Box>
         </div>
     );
 }
