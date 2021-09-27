@@ -55,8 +55,6 @@ export const ClippedDrawer = () => {
         //console.log(props)
         let url = UrlParse(props.id, 'group-list')
         const req = AltReq(url)
-        console.log(url)
-        req.then(res => {console.log(res)})
         switch (props.type) {
             case 'season':
                 req.then(res => {
