@@ -5,7 +5,7 @@ import darkScrollbar from '@mui/material/darkScrollbar';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Routes from './Routes';
 
-import { ThemeProvider, createTheme, unstable_createMuiStrictModeTheme } from '@mui/material/styles';
+import { ThemeProvider, unstable_createMuiStrictModeTheme } from '@mui/material/styles';
 
 
 const App = () => {

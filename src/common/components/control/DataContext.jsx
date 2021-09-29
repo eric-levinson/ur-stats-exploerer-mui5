@@ -31,7 +31,7 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 export const DataContext = props => {
 
     //const things = React.useContext(ThingsContext)
-    //console.log(props.selected.data)
+    //console.log(props)
     let stats = props.selected.data
     const [alignment, setAlignment] = React.useState('game_average');
     const [dataView, setDataView] = React.useState('players');

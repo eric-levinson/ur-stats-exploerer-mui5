@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import Drawer from '@mui/material/Drawer';
 import AppBar from '@mui/material/AppBar';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -20,10 +21,28 @@ import { AltReq, UrlParse } from '../../utils/AltReq';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import GamesIcon from '@mui/icons-material/Games';
 import { DataContext } from '../components/control/DataContext';
-
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import _ from 'lodash'
 
 
 const drawerWidth = 240;
+
+function NoneSelected() {
+    return (
+        <div sx={{
+            padding: 2,
+        }}>
+            <Grid
+                container
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+            >
+                <h2>Select a Season and League</h2>
+            </Grid>
+        </div>
+    )
+}
 
 
 
@@ -36,7 +55,7 @@ export const ClippedDrawer = () => {
     const [match, setMatch] = React.useState() // eslint-disable-next-line
     const [games, setGames] = React.useState() // eslint-disable-next-line
     const [selected, setSelected] = React.useState() // eslint-disable-next-line
-    const [open, setOpen] = React.useState({ season: true, leagues: true, weeks: true, matches: true });
+    const [open, setOpen] = React.useState({ season: true, leagues: true, weeks: true, matches: true, games: true });
 
     const DataRelay = props => {
         //console.log(props)
@@ -46,7 +65,7 @@ export const ClippedDrawer = () => {
         req.then(res => {
             setSelected({ ...selected, name: props.name, id: props.id, type: props.type, data: res.data })
             //setActive({...active, data: res.data})
-            //console.log(selected)
+            console.log(selected)
         })
 
     }
@@ -58,7 +77,7 @@ export const ClippedDrawer = () => {
         switch (props.type) {
             case 'season':
                 req.then(res => {
-                    
+
                     res.data.list.sort((a, b) => a.name.localeCompare(b.name))
                     setLeagues(res.data.list)
                     //res.data.list[0].id)
@@ -91,19 +110,29 @@ export const ClippedDrawer = () => {
                     //console.log(res.data.list)
                 })
                 DataRelay(props)
+                setGames()
                 setActive({ season: active.season, league: active.league, week: props, match: undefined, games: undefined })
                 //console.log(active)
                 break;
             case 'match':
                 //console.log('match')
-                req.then(res => {
-                    res.data.list.sort((a, b) => a.name.localeCompare(b.name))
-                    setGames(res.data.list)
-                    //console.log(res.data.list)
+                AltReq(UrlParse(props.id, 'match-list')).then(res => { 
+                    let base = res.data.list
+                    let ordered = _.orderBy(base, ['date'], ['asc', 'dsc'])
+                    setGames(ordered)
+                    console.log(ordered)
                 })
                 DataRelay(props)
-                setActive({ ...active, match: props, })
+                setActive({ ...active, match: props, game: undefined })
                 //console.log(active)
+                break;
+            case 'game':
+                console.log(props)
+                AltReq(UrlParse(props.id, 'game-stats')).then(res => {
+                    console.log(res.data)
+                })
+                
+                setActive({...active, game: props})
                 break;
             default:
                 console.log('default')
@@ -170,7 +199,7 @@ export const ClippedDrawer = () => {
 
                     {leagues !== undefined ? <div>
                         <ListItemButton value="leagues" onClick={event => handleClick({ ...open, leagues: !open.leagues })}>
-                            <ListItemText primary="Leagues" secondary={active && active.league !== undefined ? active.league.name : 'Pick a league'}  />
+                            <ListItemText primary="Leagues" secondary={active && active.league !== undefined ? active.league.name : 'Pick a league'} />
                             {open.leagues ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
                         <Collapse in={open.leagues} timeout="auto" unmountOnExit>
@@ -248,13 +277,49 @@ export const ClippedDrawer = () => {
                     </div> : null
                     }
 
+                    {games !== undefined ? <div>
+                        <ListItemButton value="games" onClick={event => handleClick({ ...open, games: !open.games })}>
+                            <ListItemText primary="Games" secondary={active && active.game !== undefined ? active.game.name : 'Groups Stats'} />
+                            {open.games ? <ExpandLess /> : <ExpandMore />}
+                        </ListItemButton>
+                        <Collapse in={open.games} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding>
+                                <ListItem key={0} >
+                                    <ListItemButton
+                                        sx={{ pl: 4 }}
+                                        onClick={() => Updater({ name: active.match.name, id: active.match.id, type: 'match' })}
+                                    >
+                                        <ListItemIcon>
+                                            <SportsEsportsIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary={'Group'} />
+                                    </ListItemButton>
+                                </ListItem>
+                                {games.map((item, i ) => <ListItem key={i} >
+                                    <ListItemButton
+                                        sx={{ pl: 4 }}
+                                        onClick={() => Updater({ name: 'Game ' + i++, id: item.id, type: 'game' })}
+                                    >
+                                        <ListItemIcon>
+                                            <SportsEsportsIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary={'Game ' + (1 + i++)} />
+                                    </ListItemButton>
+                                </ListItem>
+                                )}
+
+                            </List>
+                        </Collapse>
+                        <Divider />
+                    </div> : null
+                    }
 
                 </Box>
             </Drawer>
 
             <Box component="main" sx={{ flexGrow: 1, }}>
                 <Toolbar />
-                {selected !== undefined ? <DataContext active={active} selected={selected} /> /*<ExploreTabs active={active} selected={selected} />*/ : null}
+                {selected !== undefined ? <DataContext active={active} selected={selected} /> /*<ExploreTabs active={active} selected={selected} />*/ : <NoneSelected/>}
 
             </Box>
         </Box>
