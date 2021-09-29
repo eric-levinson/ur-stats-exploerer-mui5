@@ -277,7 +277,7 @@ export const ClippedDrawer = () => {
                     </div> : null
                     }
 
-                    {games !== undefined ? <div>
+                    {/*games !== undefined ? <div>
                         <ListItemButton value="games" onClick={event => handleClick({ ...open, games: !open.games })}>
                             <ListItemText primary="Games" secondary={active && active.game !== undefined ? active.game.name : 'Groups Stats'} />
                             {open.games ? <ExpandLess /> : <ExpandMore />}
@@ -312,7 +312,7 @@ export const ClippedDrawer = () => {
                         </Collapse>
                         <Divider />
                     </div> : null
-                    }
+                    */}
 
                 </Box>
             </Drawer>
