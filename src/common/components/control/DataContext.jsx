@@ -27,12 +27,19 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
     },
 }));
 
+const initialstate = {
+    games: undefined
+}
+
 
 export const DataContext = props => {
 
     //const things = React.useContext(ThingsContext)
     //console.log(props)
+    let series = props.series
     let stats = props.selected.data
+    // eslint-disable-next-line no-unused-vars
+    const [state, setState] = React.useState()
     const [alignment, setAlignment] = React.useState('game_average');
     const [dataView, setDataView] = React.useState('players');
     const [formats, setFormats] = React.useState(() => ['core']);// eslint-disable-next-line
@@ -86,6 +93,8 @@ export const DataContext = props => {
         //console.log(initMap)
         setColumns(col)
         setRows(initMap)
+        setState({...state, series})
+        //console.log(state)
 
 
     }, [props, alignment, dataView, formats])

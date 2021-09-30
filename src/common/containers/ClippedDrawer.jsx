@@ -23,6 +23,7 @@ import GamesIcon from '@mui/icons-material/Games';
 import { DataContext } from '../components/control/DataContext';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import _ from 'lodash'
+import { ColorTabs } from '../components/nav/MatchComponent';
 
 
 const drawerWidth = 240;
@@ -44,16 +45,28 @@ function NoneSelected() {
     )
 }
 
-
+const initialstate = {
+    active: undefined,
+    season: undefined,
+    leagues: undefined,
+    week: undefined,
+    match: undefined,
+    games: undefined,
+    seriesData: undefined,
+    selected: undefined,
+    open: { season: true, leagues: true, weeks: true, matches: true, games: true }
+}
 
 export const ClippedDrawer = () => {
     // eslint-disable-next-line
+    const [drawerState, setDrawerState] = React.useState(initialstate) //eventually I would like to full transition to this approach. New state data will be using this.
     const [active, setActive] = React.useState() // eslint-disable-next-line
     const [season, setSeason] = React.useState() // eslint-disable-next-line
     const [leagues, setLeagues] = React.useState() // eslint-disable-next-line
     const [week, setWeek] = React.useState() // eslint-disable-next-line
     const [match, setMatch] = React.useState() // eslint-disable-next-line
     const [games, setGames] = React.useState() // eslint-disable-next-line
+    const [seriesData, setSeriesData] = React.useState()// eslint-disable-next-line
     const [selected, setSelected] = React.useState() // eslint-disable-next-line
     const [open, setOpen] = React.useState({ season: true, leagues: true, weeks: true, matches: true, games: true });
 
@@ -65,7 +78,7 @@ export const ClippedDrawer = () => {
         req.then(res => {
             setSelected({ ...selected, name: props.name, id: props.id, type: props.type, data: res.data })
             //setActive({...active, data: res.data})
-            console.log(selected)
+            //console.log(selected)
         })
 
     }
@@ -86,6 +99,7 @@ export const ClippedDrawer = () => {
                 //setSelected(props)
                 setWeek()
                 setMatch()
+                setSeriesData()
                 setActive({ season: props, league: undefined, week: undefined, match: undefined, games: undefined })
                 //console.log(active)
                 break;
@@ -99,6 +113,7 @@ export const ClippedDrawer = () => {
                 })
                 DataRelay(props)
                 setMatch()
+                setSeriesData()
                 setActive({ season: active.season, league: props, week: undefined, match: undefined, games: undefined })
                 //console.log(active)
                 break;
@@ -111,6 +126,7 @@ export const ClippedDrawer = () => {
                 })
                 DataRelay(props)
                 setGames()
+                setSeriesData()
                 setActive({ season: active.season, league: active.league, week: props, match: undefined, games: undefined })
                 //console.log(active)
                 break;
@@ -120,18 +136,33 @@ export const ClippedDrawer = () => {
                     let base = res.data.list
                     let ordered = _.orderBy(base, ['date'], ['asc', 'dsc'])
                     setGames(ordered)
-                    console.log(ordered)
+
+                    let stats = []
+                    const StatsParse = props =>{
+                        
+                        AltReq(props.url).then(res => {
+                            stats.push(res.data)
+                            setSeriesData(stats)
+                        })
+                    }
+                    //console.log(ordered)
+
+                    ordered.forEach((replay, i, arr) =>{
+                        setTimeout(() => {
+                            StatsParse({url: UrlParse(replay.id, 'game-stats')})
+                        }, i * 500)
+                    })
                 })
                 DataRelay(props)
                 setActive({ ...active, match: props, game: undefined })
                 //console.log(active)
                 break;
             case 'game':
-                console.log(props)
+                //console.log(props)
                 AltReq(UrlParse(props.id, 'game-stats')).then(res => {
-                    console.log(res.data)
+                    //console.log(res.data)
                 })
-                
+                setSeriesData()
                 setActive({...active, game: props})
                 break;
             default:
@@ -152,7 +183,7 @@ export const ClippedDrawer = () => {
             <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                 <Toolbar>
                     <Typography variant="h6" noWrap component="div">
-                        Explore - {active && active.season !== undefined ? active.season.name : 'Pick a season'} {active && active.league !== undefined ? ' - ' + active.league.name : null} {active && active.week !== undefined ? ' - ' + active.week.name : null} {active && active.match !== undefined ? ' - ' + active.match.name : null}
+                        Explore - {active && active.season !== undefined ? active.season.name : 'Pick a season'} {active && active.league !== undefined ? ' - ' + active.league.name : null} {active && active.week !== undefined ? ' - ' + active.week.name : null} {active && active.match !== undefined ? ' - ' + active.match.name : null} {active && active.game !== undefined ? ' - ' + active.game.name : null}
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -311,15 +342,15 @@ export const ClippedDrawer = () => {
                             </List>
                         </Collapse>
                         <Divider />
-                    </div> : null
-                    */}
+                    </div> : null*/}
 
                 </Box>
             </Drawer>
 
             <Box component="main" sx={{ flexGrow: 1, }}>
                 <Toolbar />
-                {selected !== undefined ? <DataContext active={active} selected={selected} /> /*<ExploreTabs active={active} selected={selected} />*/ : <NoneSelected/>}
+
+                {selected !== undefined ? <DataContext active={active} selected={selected} series={seriesData} /> /*<ExploreTabs active={active} selected={selected} />*/ : <NoneSelected/>}
 
             </Box>
         </Box>
