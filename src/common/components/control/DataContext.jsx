@@ -11,6 +11,7 @@ import { ThingsProvider } from '../data/ThingContext'
 import _ from 'lodash'
 
 
+
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
     '& .MuiToggleButtonGroup-grouped': {
         margin: theme.spacing(0.5),
@@ -73,9 +74,24 @@ export const DataContext = props => {
         setFormats(newFormats);
     };
 
+    const mvpr = (e) => {
+        const rounder = (n) => {return Math.round(n, 3)}
+        return (e.goals*1)+(e.assists*0.75)+(e.saves*0.60)+(e.shots/3)
+    }
+
     //console.log(data[dataView])
     let initMap = stats[dataView].map(item => {
         let statArr = []
+        _.merge(item, {game_average: {
+            core: {
+                mvpr: mvpr(item.game_average.core)
+            }
+        }, cumulative: {
+            core: {
+                mvpr: mvpr(item.cumulative.core)
+            }
+        }})
+        console.log(item)
         formats.forEach(format => _.assign(statArr, item.[alignment].[format]))
         let team = item.team !== undefined ? item.team : item.name
         return _.assign({ id: item.name, /*name: item.name,*/ team }, statArr)
