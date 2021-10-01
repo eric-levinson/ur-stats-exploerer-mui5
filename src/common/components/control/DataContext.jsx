@@ -91,7 +91,6 @@ export const DataContext = props => {
                 mvpr: mvpr(item.cumulative.core)
             }
         }})
-        console.log(item)
         formats.forEach(format => _.assign(statArr, item.[alignment].[format]))
         let team = item.team !== undefined ? item.team : item.name
         return _.assign({ id: item.name, /*name: item.name,*/ team }, statArr)
