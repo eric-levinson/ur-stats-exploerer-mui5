@@ -37,7 +37,7 @@ const options = {
   },
 };
 
-const LineChart = props => (
+export const LineChart = props => (
   <>
     <div className='header'>
       <h1 className='title'>Line Chart</h1>
@@ -46,4 +46,3 @@ const LineChart = props => (
   </>
 );
 
-export default LineChart;

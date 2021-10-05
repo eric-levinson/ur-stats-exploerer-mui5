@@ -111,7 +111,7 @@ export const SimpleTable = () => {
         columns: things[0].columns
     }
 
-    //console.log(data)
+    //console.log(things[0])
 
     //const { data } = useDemoData({
     //    dataSet: 'Commodity',
