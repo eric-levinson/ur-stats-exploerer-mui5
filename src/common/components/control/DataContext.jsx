@@ -86,11 +86,18 @@ export const DataContext = props => {
         _.merge(item, {
             game_average: {
                 core: {
-                    mvpr: mvpr(item.game_average.core)
+                    mvpr: mvpr(item.game_average.core),
+                    games: item.cumulative.games,
+                    wins: item.cumulative.wins,
+                    wp: item.cumulative.win_percentage
+
                 }
             }, cumulative: {
                 core: {
-                    mvpr: mvpr(item.cumulative.core)
+                    mvpr: mvpr(item.cumulative.core),
+                    games: item.cumulative.games,
+                    wins: item.cumulative.wins,
+                    wp: item.cumulative.win_percentage
                 }
             }
         })
