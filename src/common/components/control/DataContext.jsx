@@ -83,27 +83,28 @@ export const DataContext = props => {
     //console.log(data[dataView])
     let initMap = stats[dataView].map(item => {
         let statArr = []
+        let team = item.team !== undefined ? item.team : item.name
+        let base = {
+            id: item.name,
+            team,
+            games: item.cumulative.games,
+            wins: item.cumulative.wins,
+            win_percentage: item.cumulative.win_percentage
+        }
         _.merge(item, {
             game_average: {
                 core: {
-                    mvpr: mvpr(item.game_average.core),
-                    games: item.cumulative.games,
-                    wins: item.cumulative.wins,
-                    wp: item.cumulative.win_percentage
-
+                    mvpr: mvpr(item.game_average.core)
                 }
             }, cumulative: {
                 core: {
-                    mvpr: mvpr(item.cumulative.core),
-                    games: item.cumulative.games,
-                    wins: item.cumulative.wins,
-                    wp: item.cumulative.win_percentage
+                    mvpr: mvpr(item.cumulative.core)
                 }
             }
         })
         formats.forEach(format => _.assign(statArr, item.[alignment].[format]))
-        let team = item.team !== undefined ? item.team : item.name
-        return _.assign({ id: item.name, /*name: item.name,*/ team }, statArr)
+        
+        return _.assign(base, statArr)
     })
     //console.log(initMap)
 
@@ -184,12 +185,12 @@ export const DataContext = props => {
             <Divider />
             <ThingsProvider value={[{ rows: rows, columns: columns, series: state.series, control: { alginment: alignment, dataview: dataView, format: formats } }]}>
                 <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                    <div style={{ height: 500, maxHeight: '100%', width: '100%' }}>
+                    <div style={{ height: 850, maxHeight: '100%', width: '100%' }}>
                         <SimpleTable />
                     </div>
                 </Box>
-                <Divider />
-                {formats !== [] ? <ColorTabs/> : null}
+                {/*<Divider />
+                formats !== [] ? <ColorTabs/> : null*/}
             </ThingsProvider>
         </div>
     );
