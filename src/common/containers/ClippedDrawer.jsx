@@ -223,6 +223,15 @@ export const ClippedDrawer = () => {
                                 </ListItemIcon>
                                 <ListItemText primary="Season 11" id='season-11-phqfzmk1fq' />
                             </ListItemButton>
+                            <ListItemButton
+                                sx={{ pl: 4 }}
+                                onClick={() => Updater({ name: 'Season 12', id: 'season-12-23wdl6anha', type: 'season' })}
+                            >
+                                <ListItemIcon>
+                                    <LanguageIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Season 12" id='season-12-23wdl6anha' />
+                            </ListItemButton>
                         </List>
 
                     </Collapse>
