@@ -4,8 +4,8 @@ import {
     GridToolbar,
     GridToolbarDensitySelector,
     GridToolbarFilterButton,
-    GridToolbarExport, 
-    GridToolbarColumnsButton ,
+    GridToolbarExport,
+    GridToolbarColumnsButton,
 } from '@mui/x-data-grid';
 import ThingsContext from './ThingContext'
 import TextField from '@mui/material/TextField';
@@ -121,7 +121,7 @@ export const SimpleTable = () => {
 
 
     const [searchText, setSearchText] = React.useState('');
-    const [rows, setRows] = React.useState < any[] > (data.rows);
+    const [rows, setRows] = React.useState<any[]>(data.rows);
 
     const requestSearch = (searchValue: string) => {
         setSearchText(searchValue);
@@ -140,22 +140,20 @@ export const SimpleTable = () => {
 
     return (
         <>
-            <div style={{ display: 'flex', height: '100%', width: '100%' }}>
-                <div style={{ flexGrow: 1, }}>
-                <DataGrid
-                        style={{}}
-                        components={{ Toolbar: QuickSearchToolbar }}
-                        rows={rows}
-                        columns={data.columns}
-                        componentsProps={{
-                            toolbar: {
-                                value: searchText,
-                                onChange: (event) => requestSearch(event.target.value),
-                                clearSearch: () => requestSearch(''),
-                            },
-                        }}
-                    />
-                </div>
-            </div></>
+            <DataGrid
+                autoPageSize
+                style={{}}
+                components={{ Toolbar: QuickSearchToolbar }}
+                rows={rows}
+                columns={data.columns}
+                componentsProps={{
+                    toolbar: {
+                        value: searchText,
+                        onChange: (event) => requestSearch(event.target.value),
+                        clearSearch: () => requestSearch(''),
+                    },
+                }}
+            />
+        </>
     );
 }

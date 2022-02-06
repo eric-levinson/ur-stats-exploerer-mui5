@@ -16,11 +16,13 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import ListItem from '@mui/material/ListItem';
+import Button from '@mui/material/Button';
 import ListItemButton from '@mui/material/ListItemButton'
 import { AltReq, UrlParse } from '../../utils/AltReq';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import GamesIcon from '@mui/icons-material/Games';
 import { DataContext } from '../components/control/DataContext';
+import TextField from '@mui/material/TextField';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import _ from 'lodash'
 import { ColorTabs } from '../components/nav/MatchComponent';
@@ -44,6 +46,7 @@ function NoneSelected() {
         </div>
     )
 }
+
 
 const initialstate = {
     active: undefined,
@@ -80,11 +83,10 @@ export const ClippedDrawer = () => {
             //setActive({...active, data: res.data})
             //console.log(selected)
         })
-
     }
 
     const Updater = props => {
-        //console.log(props)
+        console.log(props)
         let url = UrlParse(props.id, 'group-list')
         const req = AltReq(url)
         switch (props.type) {
@@ -176,16 +178,37 @@ export const ClippedDrawer = () => {
     };
 
 
+    const [custom, setCustom] = React.useState()
+    const customHandler = props => {
+
+        console.log(custom)
+        let url = UrlParse(custom, 'group-stats')
+        AltReq(url).then(res => {
+            let base = res.data
+
+            console.log(base)
+
+
+            Updater({ id: base.id, name: base.name, type: 'match' })
+
+
+        })
+    }
+
+
 
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, '& .MuiTextField-root': { m: 1, width: '25ch' }}}>
                 <Toolbar>
-                    <Typography variant="h6" noWrap component="div">
+                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                         Explore - {active && active.season !== undefined ? active.season.name : 'Pick a season'} {active && active.league !== undefined ? ' - ' + active.league.name : null} {active && active.week !== undefined ? ' - ' + active.week.name : null} {active && active.match !== undefined ? ' - ' + active.match.name : null} {active && active.game !== undefined ? ' - ' + active.game.name : null}
                     </Typography>
+                    <TextField id="custom-group-id" onChange={e => setCustom(e.target.value)} label="custom group id" variant="outlined" />
+                    <Button variant="outlined" onClick={() => customHandler() }>Submit</Button>
                 </Toolbar>
+               
             </AppBar>
 
             <Drawer
@@ -222,6 +245,16 @@ export const ClippedDrawer = () => {
                                     <LanguageIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="Season 11" id='season-11-phqfzmk1fq' />
+                            </ListItemButton>
+
+                            <ListItemButton
+                                sx={{ pl: 4 }}
+                                onClick={() => Updater({ name: 'Season 12', id: 'season-12-23wdl6anha', type: 'season' })}
+                            >
+                                <ListItemIcon>
+                                    <LanguageIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Season 12" id='season-12-23wdl6anha' />
                             </ListItemButton>
                         </List>
 

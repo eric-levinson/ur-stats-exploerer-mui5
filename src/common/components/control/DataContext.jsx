@@ -8,6 +8,7 @@ import Box from '@mui/material/Box'
 import { SimpleTable } from '../data/OnlyTable.tsx'
 import { ThingsProvider } from '../data/ThingContext'
 import { ColorTabs } from '../nav/MatchComponent'; 
+import { ChartsControl } from './ChartsControl';
 import _ from 'lodash'
 
 
@@ -34,7 +35,7 @@ const initialstate = {
 
 
 export const DataContext = props => {
-
+    console.log(props)
     //const things = React.useContext(ThingsContext)
 
     let series = props.series
@@ -126,6 +127,8 @@ export const DataContext = props => {
 
     }, [props, alignment, dataView, formats])
 
+    let tableHeight = rows.length*85 > 550 ? `80vh` : rows.length*85
+
     //console.log(columns)
     //console.log(rows)
     return (
@@ -141,16 +144,7 @@ export const DataContext = props => {
                 <StyledToggleButtonGroup
                     size="small"
                     value={dataView}
-                    onChange={(e) => handleChange(e, e.target)}
-                    aria-label="text formatting"
-                >
-                    <ToggleButton id="dataview" value="players">Players</ToggleButton>
-                    <ToggleButton id="dataview" value="teams">Teams</ToggleButton>
-                </StyledToggleButtonGroup>
-                <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
-                <StyledToggleButtonGroup
-                    size="small"
-                    value={dataView}
+                    exclusive
                     onChange={(e) => handleChange(e, e.target)}
                     aria-label="text formatting"
                 >
@@ -183,14 +177,16 @@ export const DataContext = props => {
                 </StyledToggleButtonGroup>
             </Paper>
             <Divider />
+
             <ThingsProvider value={[{ rows: rows, columns: columns, series: state.series, control: { alginment: alignment, dataview: dataView, format: formats } }]}>
                 <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                    <div style={{ height: 850, maxHeight: '100%', width: '100%' }}>
+                    <div style={{  minHeight: `30vh`, height: tableHeight, maxHeight: 850, width: '100%' }}>
                         <SimpleTable />
                     </div>
                 </Box>
-                {/*<Divider />
-                formats !== [] ? <ColorTabs/> : null*/}
+                <Divider />
+                <ChartsControl />
+                {/*series !== undefined ? <ColorTabs/> : null*/}
             </ThingsProvider>
         </div>
     );
