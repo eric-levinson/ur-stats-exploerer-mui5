@@ -109,7 +109,7 @@ export const GroupDrawer = props => {
             setSelected({ id: props.id, data: props.group })
         }
     }
-    console.log(selected)
+    //console.log(selected)
 
     return (
         <Box sx={{ display: 'flex' }}>
