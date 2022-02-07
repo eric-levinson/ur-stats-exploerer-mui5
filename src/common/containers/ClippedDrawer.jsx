@@ -28,6 +28,7 @@ import _ from 'lodash'
 import { ColorTabs } from '../components/nav/MatchComponent';
 import MenuIcon from '@mui/icons-material/Menu';
 import IconButton from '@mui/material/IconButton';
+const customID = process.env.REACT_APP_CUSTOMID
 
 
 const drawerWidth = 240;
@@ -199,8 +200,6 @@ export const ClippedDrawer = () => {
         })
     }
 
-
-
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -221,8 +220,8 @@ export const ClippedDrawer = () => {
                     <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                         Explore - {active && active.season !== undefined ? active.season.name : 'Pick a season'} {active && active.league !== undefined ? ' - ' + active.league.name : null} {active && active.week !== undefined ? ' - ' + active.week.name : null} {active && active.match !== undefined ? ' - ' + active.match.name : null} {active && active.game !== undefined ? ' - ' + active.game.name : null}
                     </Typography>
-                    <TextField id="custom-group-id" onChange={e => setCustom(e.target.value)} label="custom group id" variant="outlined" />
-                    <Button variant="outlined" onClick={() => customHandler() }>Submit</Button>
+                    {customID === 'true' ? <><TextField id="custom-group-id" onChange={e => setCustom(e.target.value)} label="custom group id" variant="outlined" />
+                    <Button variant="outlined" onClick={() => customHandler() }>Submit</Button></> : null}
                 </Toolbar>
                
             </AppBar>
