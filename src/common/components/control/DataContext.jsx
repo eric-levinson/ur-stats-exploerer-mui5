@@ -35,7 +35,7 @@ const initialstate = {
 
 
 export const DataContext = props => {
-    console.log(props)
+    //console.log(props)
     //const things = React.useContext(ThingsContext)
 
     let series = props.series
@@ -83,6 +83,7 @@ export const DataContext = props => {
 
     //console.log(data[dataView])
     let initMap = stats[dataView].map(item => {
+        //console.log(item)
         let statArr = []
         let team = item.team !== undefined ? item.team : item.name
         let base = {

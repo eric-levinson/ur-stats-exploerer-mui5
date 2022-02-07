@@ -53,7 +53,7 @@ export const ChartsControl = props => {
     const [state, setState] = React.useState(initialState);
 
     const seriesReformat = (data, filter) => {
-
+        console.log(filter)
         let activeData = []
         /*
             {
@@ -106,7 +106,6 @@ export const ChartsControl = props => {
 
                             let chillin = []
                             data.map(game => {
-                                console.log(game)
                                 //creating the object for each player
                                 //console.log(game.teams.find(e => e.name === e.name))
                                 let playerStats = game.teams.find(e => e.name === player).stats[item]
@@ -149,7 +148,86 @@ export const ChartsControl = props => {
             //console.log(mappedData)
 
         }
-        else if (filter === 'teams') {
+        else if (filter === 'teams' && typeof data !== 'undefined') {
+            //console.log(data)
+            data.map((item, index) => {
+                console.log(item)
+
+                let blueName = item.blue.name !== undefined ? item.blue.name : _.join(_.map(item.blue.players, 'name'), ', ')
+                let orangeName = item.orange.name !== undefined ? item.orange.name : _.join(_.map(item.orange.players, 'name'), ', ')
+
+                let newItem = {
+                    gamenumber: index++,
+                    title: item.title,
+                    teams: [{
+                            name: blueName,
+                            team: 'blue',
+                            stats: item.blue.stats[state.format],
+                        },{
+                            name: orangeName,
+                            team: 'orange',
+                            stats: item.orange.stats[state.format],
+                        },]
+                    //players: _.concat(item.blue.players.map(e => { return e.name }), item.orange.players.map(e => { return e.name }))
+                }
+                activeData.push(newItem)
+            })
+
+            let datapoints = _.keys(data[0].blue.stats.[state.format])
+
+            let mappedData = []
+            const formatData = (data) => {
+                datapoints.map((item) => {
+                console.log(data)
+
+                    let teams = []
+                    data[0].teams.map(team => {
+                        console.log(team)
+                        const mapper = () => {
+
+                            let chillin = []
+                            data.map(game => {
+                                //console.log(game)
+                                //creating the object for each player
+                                //console.log(game.teams.find(e => e.name === e.name))
+                                let teamStats = game.teams.find(e => e.team === team.team).stats[item]
+                                //console.log(playerStats)
+                                chillin.push(teamStats)
+                            })
+                            //console.log(chillin)
+                            return chillin
+                        }
+
+                        let listStats = {
+                            name: team.name,
+                            team: team.team,
+                            stats: mapper()
+                        }
+
+
+                        teams.push(listStats)
+                    })
+
+                    //console.log(players)
+
+
+                    let dSet = {
+                        label: item,
+                        series_length: data.length,
+                        dataset: teams,
+                    }
+
+                    mappedData.push(dSet)
+                    //console.log(players)
+                    //console.log(mappedData)
+
+                })
+            }
+            formatData(activeData)
+            //console.log(_.join([activeData[0].players[0].stats.core.score, activeData[1].players[0].stats.core.score, activeData[2].players[0].stats.core.score], ', '))
+            setState({ ...state, chartData: mappedData })
+            
+
         }
 
 

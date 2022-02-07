@@ -26,6 +26,8 @@ import TextField from '@mui/material/TextField';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import _ from 'lodash'
 import { ColorTabs } from '../components/nav/MatchComponent';
+import MenuIcon from '@mui/icons-material/Menu';
+import IconButton from '@mui/material/IconButton';
 
 
 const drawerWidth = 240;
@@ -72,6 +74,7 @@ export const ClippedDrawer = () => {
     const [seriesData, setSeriesData] = React.useState()// eslint-disable-next-line
     const [selected, setSelected] = React.useState() // eslint-disable-next-line
     const [open, setOpen] = React.useState({ season: true, leagues: true, weeks: true, matches: true, games: true });
+    const [drawer, setDrawer] = React.useState(true);
 
     const DataRelay = props => {
         //console.log(props)
@@ -86,7 +89,7 @@ export const ClippedDrawer = () => {
     }
 
     const Updater = props => {
-        console.log(props)
+        //console.log(props)
         let url = UrlParse(props.id, 'group-list')
         const req = AltReq(url)
         switch (props.type) {
@@ -145,6 +148,7 @@ export const ClippedDrawer = () => {
                         AltReq(props.url).then(res => {
                             stats.push(res.data)
                             setSeriesData(stats)
+                            //console.log(res.data)
                         })
                     }
                     //console.log(ordered)
@@ -202,6 +206,18 @@ export const ClippedDrawer = () => {
             <CssBaseline />
             <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, '& .MuiTextField-root': { m: 1, width: '25ch' }}}>
                 <Toolbar>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={() => setDrawer(!drawer)}
+                        edge="start"
+                        sx={{
+                            mr: 2,
+                            //display: drawer ? 'flex' : 'none'
+                        }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
                     <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                         Explore - {active && active.season !== undefined ? active.season.name : 'Pick a season'} {active && active.league !== undefined ? ' - ' + active.league.name : null} {active && active.week !== undefined ? ' - ' + active.week.name : null} {active && active.match !== undefined ? ' - ' + active.match.name : null} {active && active.game !== undefined ? ' - ' + active.game.name : null}
                     </Typography>
@@ -217,6 +233,10 @@ export const ClippedDrawer = () => {
                     width: drawerWidth,
                     flexShrink: 0,
                     [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+                    display:  drawer ? 'flex' : 'none',
+                    visibility: open ? 'visible' : 'hidden',
+                    opacity: open ? 1 : 0,
+                    transition: 'visibility 0s, opacity 0.5s linear, display 1s linear'
                 }}
             >
                 <Toolbar />
